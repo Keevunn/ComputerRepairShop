@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 175361708}
   - component: {fileID: 175361710}
   - component: {fileID: 175361709}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Grass_Tilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -193,8 +193,8 @@ TilemapRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1223086655
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -1169,7 +1169,7 @@ GameObject:
   - component: {fileID: 1165889970}
   - component: {fileID: 1165889974}
   - component: {fileID: 1165889973}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1235,8 +1235,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 794331929
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: -896376291, guid: c9c89c49d05b5be45915e01d5ad8022d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1303,7 +1303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbcdea4d73a030c4999d925c7dd04941, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSpeed: 2
+  playerSpeed: 4
 --- !u!1 &1343853360
 GameObject:
   m_ObjectHideFlags: 0
