@@ -1,4 +1,0 @@
-repository "ComputerRepairShop@NewcastleUni_CSC3232@cloud"
-  path "/"
-    br "/main"
-    co "/main"
