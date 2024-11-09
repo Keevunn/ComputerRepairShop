@@ -6,13 +6,18 @@ using static System.Math;
 
 public class NPCControlScript : MonoBehaviour
 {
-    public int _health = 100;
+    [SerializeField] private int _health = 100;
     private bool _alive = true;
     [SerializeField] private TextMeshPro HealthDisplay;
 
     public int GetHealth()
     {
         return _health;
+    }
+
+    public void SetHealth(int health)
+    {
+        _health = health;
     }
     public bool IsAlive()
     {
