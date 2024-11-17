@@ -471,6 +471,7 @@ GameObject:
   - component: {fileID: 334741622}
   - component: {fileID: 334741624}
   - component: {fileID: 334741623}
+  - component: {fileID: 334741625}
   m_Layer: 0
   m_Name: Player Parent
   m_TagString: Player
@@ -510,7 +511,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 3
   sprintSpeed: 10
-  rbDrag: 5
+  jumpForce: 10
+  fallMultiplier: 5
+  jumpKey: 32
+  sprintKey: 304
 --- !u!54 &334741624
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -520,7 +524,7 @@ Rigidbody:
   m_GameObject: {fileID: 334741621}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 5
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -536,8 +540,21 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 80
+  m_Constraints: 96
   m_CollisionDetection: 0
+--- !u!114 &334741625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334741621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c80ca3fa07f044fbc9cec52c64795f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sensitivity: 2
 --- !u!4 &392372597 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6938379136243493872, guid: bbce99680f8928b4eb461a29fef36e8c, type: 3}
@@ -939,8 +956,8 @@ GameObject:
   - component: {fileID: 596318567}
   - component: {fileID: 596318566}
   - component: {fileID: 596318565}
-  m_Layer: 0
-  m_Name: Plane
+  m_Layer: 7
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1570,7 +1587,6 @@ GameObject:
   - component: {fileID: 1415454816}
   - component: {fileID: 1415454818}
   - component: {fileID: 1415454817}
-  - component: {fileID: 1415454819}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -1653,19 +1669,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &1415454819
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1415454815}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7c80ca3fa07f044fbc9cec52c64795f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sensitivity: 5
 --- !u!1001 &1444857282
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -19,10 +19,13 @@ public class CameraController : MonoBehaviour
     
     private void Awake()
     {
-        _cam = GetComponentInChildren<Camera>().transform;
-        
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void Start()
+    {
+        _cam = GetComponentInChildren<Camera>().transform;
     }
 
     // Update is called once per frame
