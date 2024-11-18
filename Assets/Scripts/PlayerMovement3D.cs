@@ -8,8 +8,9 @@ public class PlayerMovement3D : MonoBehaviour
     private const float PlayerHeight = 2f;
     
     [Header("Movement")]
-    [SerializeField] private float movementSpeed = 5f;
+    [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float sprintSpeed = 10f;
+    private float _movementSpeed;
     
     [Header("Jumping")]
     [SerializeField] private float jumpForce = 5f;
@@ -36,7 +37,7 @@ public class PlayerMovement3D : MonoBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        if (!rb) rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         
         _groundLayer = LayerMask.GetMask("Ground");
@@ -55,7 +56,6 @@ public class PlayerMovement3D : MonoBehaviour
         if (!_isJumping) _isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundCheckRadius);
         else Jump();
         MovePlayer();
-        
     }
 
     private void MovementInputControls()
@@ -65,11 +65,13 @@ public class PlayerMovement3D : MonoBehaviour
         
         // Move in direction of player
         _movementDirection = (transform.right * _horizontalMovement + transform.forward * _verticalMovement).normalized;
+
+        _movementSpeed = Input.GetKey(sprintKey) ? sprintSpeed : walkSpeed;
     }
 
     private void MovePlayer()
     {
-        rb.AddForce(_movementDirection * (movementSpeed * MovementMultiplier), ForceMode.Acceleration);
+        rb.AddForce(_movementDirection * (_movementSpeed * MovementMultiplier), ForceMode.Acceleration);
     }
 
     private void JumpCheck()
