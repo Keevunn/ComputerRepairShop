@@ -20,6 +20,12 @@ public class PlayerMovement3D : MonoBehaviour
     private LayerMask _groundLayer;
     private float _groundCheckRadius;
     
+    [Header("WallRunning")]
+    [SerializeField] private float wallCheckRadius = 0.5f;
+    private bool _isOnWall;
+    private bool _wallLeft;
+    private bool _wallRight;
+    
     [Header("Keybinds")]
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
@@ -48,6 +54,7 @@ public class PlayerMovement3D : MonoBehaviour
     {
         MovementInputControls();
         JumpCheck();
+        WallCheck();
     }
 
     private void FixedUpdate()
@@ -100,5 +107,20 @@ public class PlayerMovement3D : MonoBehaviour
         
         // On ground again 
         if (_isGrounded) _isJumping = false;
+    }
+
+    private void WallCheck()
+    {
+        if (_isGrounded)
+        {
+            _isOnWall = false;
+            return;
+        }
+        
+        _wallLeft = Physics.Raycast(transform.position, -Vector3.right, wallCheckRadius);
+        _wallRight = Physics.Raycast(transform.position, Vector3.right, wallCheckRadius);
+        
+        if (_wallLeft || _wallRight) _isOnWall = true;
+        
     }
 }

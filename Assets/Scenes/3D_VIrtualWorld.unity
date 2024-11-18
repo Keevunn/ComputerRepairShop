@@ -513,6 +513,7 @@ MonoBehaviour:
   sprintSpeed: 6
   jumpForce: 10
   fallMultiplier: 5
+  wallCheckRadius: 0.5
   jumpKey: 32
   sprintKey: 304
   rb: {fileID: 0}
@@ -2034,7 +2035,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1562573929}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 4c5bfabe8c4a0f7419719a08519536cb, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
