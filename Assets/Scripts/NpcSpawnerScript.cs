@@ -12,7 +12,7 @@ public class NpcSpawnerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       SpawnNpc(10);
+       SpawnNpc(50);
     }
 
     private void SpawnNpc(int health)
@@ -24,16 +24,14 @@ public class NpcSpawnerScript : MonoBehaviour
     private IEnumerator CooldownTimer()
     {
         yield return new WaitForSeconds(_cooldownTimer);
-        SpawnNpc(10);
+        SpawnNpc(50);
     }
 
 // Update is called once per frame
     void Update()
     {
-        if (_npc && !_npc.IsAlive())
-        {
-            _npc.DestroyObj();
-            StartCoroutine(CooldownTimer());
-        }
+        if (!_npc || _npc.IsAlive()) return;
+        _npc.DestroyObj();
+        StartCoroutine(CooldownTimer());
     }
 }

@@ -23,6 +23,9 @@ public class PlayerMovement3D : MonoBehaviour
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
     
+    [Header("References")]
+    [SerializeField] private Rigidbody rb;
+    
     private const float MovementMultiplier = 10f;
 
     private float _horizontalMovement;
@@ -30,13 +33,11 @@ public class PlayerMovement3D : MonoBehaviour
     
     private Vector3 _movementDirection;
     
-    private Rigidbody _rb;
-
 
     private void Awake()
     {
-        _rb = GetComponent<Rigidbody>();
-        _rb.freezeRotation = true;
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
         
         _groundLayer = LayerMask.GetMask("Ground");
         _groundCheckRadius = (PlayerHeight / 2) + 0.1f;
@@ -68,7 +69,7 @@ public class PlayerMovement3D : MonoBehaviour
 
     private void MovePlayer()
     {
-        _rb.AddForce(_movementDirection * (movementSpeed * MovementMultiplier), ForceMode.Acceleration);
+        rb.AddForce(_movementDirection * (movementSpeed * MovementMultiplier), ForceMode.Acceleration);
     }
 
     private void JumpCheck()
@@ -79,21 +80,21 @@ public class PlayerMovement3D : MonoBehaviour
         // Will use fast fall calculations in Jump
         _isGrounded = false;
         // Add force for 1 frame
-        _rb.velocity = Vector3.up * jumpForce;
+        rb.velocity = Vector3.up * jumpForce;
     }
 
     private void Jump()
     {
         
         //  Falling
-        if (_rb.velocity.y < 0)
+        if (rb.velocity.y < 0)
         {   
-            _rb.velocity += Vector3.up * (Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime);
+            rb.velocity += Vector3.up * (Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime);
             // Only need to check if touching the ground when falling 
             _isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundCheckRadius);
         } 
         // Rising
-        else if (_rb.velocity.y > 0 && !_isGrounded) _rb.velocity += Vector3.up * (Physics.gravity.y * Time.fixedDeltaTime);
+        else if (rb.velocity.y > 0 && !_isGrounded) rb.velocity += Vector3.up * (Physics.gravity.y * Time.fixedDeltaTime);
         
         // On ground again 
         if (_isGrounded) _isJumping = false;

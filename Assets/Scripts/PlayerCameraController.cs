@@ -6,8 +6,10 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private float sensitivity = 2.0f;
+    private const float SensMultiplier = 100f;
     
-    private Transform _cam;
+    [SerializeField] private Transform cam;
+    
     private float _camYRotation;
     private float _camXRotation;
     
@@ -25,7 +27,7 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        _cam = GetComponentInChildren<Camera>().transform;
+        if (!cam) cam = GetComponentInChildren<Camera>().transform;
     }
 
     // Update is called once per frame
@@ -35,7 +37,7 @@ public class CameraController : MonoBehaviour
         
         PlayerInput();
         // Rotate cam up and down
-        _cam.localRotation = Quaternion.Euler(Vector3.right * _camYRotation);
+        cam.localRotation = Quaternion.Euler(Vector3.right * _camYRotation);
         // Rotate player left and right
         transform.rotation = Quaternion.Euler(Vector3.up * _camXRotation);
     }
@@ -62,8 +64,8 @@ public class CameraController : MonoBehaviour
     {
         if (!_lockedCursor) return;
         
-        _rotateX = Input.GetAxis("Mouse X") * sensitivity;
-        _rotateY = Input.GetAxis("Mouse Y") * sensitivity;
+        _rotateX = Input.GetAxis("Mouse X") * sensitivity * SensMultiplier * Time.deltaTime;
+        _rotateY = Input.GetAxis("Mouse Y") * sensitivity * SensMultiplier * Time.deltaTime;
         
         _camYRotation -= _rotateY;
         _camYRotation = Mathf.Clamp(_camYRotation, -90f, 90f);
