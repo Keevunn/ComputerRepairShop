@@ -8,16 +8,26 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float sensitivity = 2.0f;
     private const float SensMultiplier = 100f;
     
-    [SerializeField] private Transform cam;
+    [SerializeField] private GameObject cam;
+    private Camera _camCamera;
+    [SerializeField] private float fov = 80f;
     
-    private float _camYRotation;
+    
+    public float CamTilt { private get; set; } // TODO: watch video 
+    //private float _tilt = 0f;
+    public float TiltDT { private get; set; }
+    public bool IsWallRunning { private get; set; }
+    public float WallRunfov { private get; set; }
+
     private float _camXRotation;
+    private float _camYRotation;
+    private float _camZRotation;
     
     private float _rotateX;
     private float _rotateY;
     
     private bool _lockedCursor = true;
-    private KeyCode _lockCursorKey = KeyCode.LeftControl;
+    [SerializeField] private KeyCode lockCursorKey = KeyCode.LeftControl;
     
     private void Awake()
     {
@@ -27,7 +37,8 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        if (!cam) cam = GetComponentInChildren<Camera>().transform;
+        if (!cam) cam = transform.Find("Camera").gameObject;
+        _camCamera = cam.GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -37,14 +48,18 @@ public class CameraController : MonoBehaviour
         
         PlayerInput();
         // Rotate cam up and down
-        cam.localRotation = Quaternion.Euler(Vector3.right * _camYRotation);
+        cam.transform.localRotation = Quaternion.Euler(_camYRotation, 0, _camZRotation);
         // Rotate player left and right
         transform.rotation = Quaternion.Euler(Vector3.up * _camXRotation);
+        
+        if (IsWallRunning) WallRunFX();
+        else ResetCamFX();
+        
     }
 
     private void CursorControl()
     {
-        if (!Input.GetKeyDown(_lockCursorKey)) return;
+        if (!Input.GetKeyDown(lockCursorKey)) return;
         if (_lockedCursor)
         {
             Cursor.visible = true;
@@ -72,5 +87,18 @@ public class CameraController : MonoBehaviour
             
         _camXRotation += _rotateX;
         
+    }
+
+    private void WallRunFX()
+    {
+        // FPS camera is main camera...for now...
+        _camCamera.fieldOfView = Mathf.Lerp(_camCamera.fieldOfView, WallRunfov, TiltDT*Time.deltaTime);
+        _camZRotation = Mathf.Lerp(_camZRotation, CamTilt, TiltDT*Time.deltaTime);
+    }
+
+    private void ResetCamFX()
+    {
+        _camCamera.fieldOfView = Mathf.Lerp(_camCamera.fieldOfView, fov, TiltDT*Time.deltaTime);
+        _camZRotation = Mathf.Lerp(_camZRotation, 0, TiltDT*Time.deltaTime);
     }
 }
