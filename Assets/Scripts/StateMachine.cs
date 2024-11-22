@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.UIElements;
 
 /// <summary>
 /// Class <c>StateMachine</c> models a general state machine. Can add states and each of their exiting transitions.
