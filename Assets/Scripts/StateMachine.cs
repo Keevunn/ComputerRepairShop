@@ -45,12 +45,24 @@ public class StateMachine
     /// <summary>
     /// Update method for current state
     /// </summary>
+    /// <remarks>Uses Update()</remarks>
     public void Tick()
     {
         Transition transition = GetTransition();
         if (!transition) SetState(transition.To);
         
         _currentState?.Tick();
+    }
+    
+    /// <summary>
+    /// Update method for current state
+    /// </summary>
+    /// <remarks>
+    /// Uses FixedUpdate() and can't transition states
+    /// </remarks>
+    public void FixedTick()
+    {
+        _currentState?.FixedTick();
     }
 
     /// <summary>

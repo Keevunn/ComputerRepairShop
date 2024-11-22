@@ -1,6 +1,9 @@
 ﻿public interface IState
 {
-    void Tick();
-    void OnEnter();
-    void OnExit();
+    public void Tick();
+
+    public void FixedTick();
+    
+    public void OnEnter();
+    public void OnExit();
 }
