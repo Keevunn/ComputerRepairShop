@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CustomGravity : MonoBehaviour
+public class GravityController : MonoBehaviour
 {
     public float GravityScale { get; set;}
     private static float _globalGravity = -9.81f;

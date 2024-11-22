@@ -7,7 +7,7 @@ public class BulletControllerScript : MonoBehaviour
 {
     private Rigidbody _rb;
     private Vector3 _velocity, _startPoint;
-    private NPCControlScript _enemy;
+    private NPCController _enemy;
     [SerializeField] private float deleteDistance = 30f;
     private float _distanceTravelled;
 
@@ -32,7 +32,7 @@ public class BulletControllerScript : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
-            _enemy = other.gameObject.GetComponent<NPCControlScript>();
+            _enemy = other.gameObject.GetComponent<NPCController>();
             if (_enemy) _enemy.SetDamage(true);
         }
         Destroy(gameObject);

@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class PlayerMovement3D : MonoBehaviour
+public class Player3DController : MonoBehaviour
 {
     private const float PlayerHeight = 2f;
     
@@ -43,7 +44,7 @@ public class PlayerMovement3D : MonoBehaviour
     [Header("References")]
     [SerializeField] private Rigidbody rb;
     [SerializeField] private CameraController cam;
-    [SerializeField] private CustomGravity moreGravity;
+    [SerializeField] private GravityController gravityController;
     
     private const float MovementMultiplier = 10f;
 
@@ -84,7 +85,7 @@ public class PlayerMovement3D : MonoBehaviour
         MovePlayer();
         
         if (_isOnWall && !_isGrounded) WallRunMovement();
-        else moreGravity.enabled = false;
+        else gravityController.enabled = false;
     }
 
     private void MovementInputControls()
@@ -93,7 +94,7 @@ public class PlayerMovement3D : MonoBehaviour
         _verticalMovement = Input.GetAxisRaw("Vertical");
 
         Vector3 forward = _isOnWall ?
-            (_wallLeft ? _wallForward : -_wallForward)
+            (_wallLeft ? _wallForward : -_wallForward) * wallRunForce
             : transform.forward;
         
         // Move in direction of player
@@ -162,18 +163,19 @@ public class PlayerMovement3D : MonoBehaviour
     private void WallRunMovement()
     {
         // movement
-        moreGravity.enabled = true;
-        moreGravity.GravityScale = gravityMultiplier;
+        gravityController.enabled = true;
+        gravityController.GravityScale = gravityMultiplier;
         
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         _wallNormal = _wallLeft ? _leftHit.normal : _rightHit.normal;
         _wallForward = Vector3.Cross(_wallNormal, transform.up);
         
-        rb.AddForce(_wallForward * wallRunForce, ForceMode.Force);
+        //rb.AddForce(-_wallForward * wallRunForce, ForceMode.Force);
+        Debug.Log(-_wallForward);
 
         // Jumping off wall
         if (!_wallJump) return;
-        moreGravity.enabled = false;
+        gravityController.enabled = false;
         _jumpDir = _wallNormal * wallSideForce + Vector3.up * wallUpForce;
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(_jumpDir * wallJumpMultiplier, ForceMode.Impulse);

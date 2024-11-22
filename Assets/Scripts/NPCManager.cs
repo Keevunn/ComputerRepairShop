@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NpcSpawnerScript : MonoBehaviour
+public class NPCManager : MonoBehaviour
 {
     public GameObject npcObj;
 
-    private NPCControlScript _npc;
+    private NPCController _npc;
     private float _cooldownTimer = 1.5f;
 
     // Start is called before the first frame update
@@ -17,7 +17,7 @@ public class NpcSpawnerScript : MonoBehaviour
 
     private void SpawnNpc(int health)
     {
-        _npc = Instantiate(npcObj, transform.position, Quaternion.identity).GetComponent<NPCControlScript>();
+        _npc = Instantiate(npcObj, transform.position, Quaternion.identity).GetComponent<NPCController>();
         _npc.SetHealth(health);
     }
 

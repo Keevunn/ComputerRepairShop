@@ -5,19 +5,24 @@ using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
 
-public class Projectile_Script : MonoBehaviour
+public class Projectiles : MonoBehaviour
 {
     //Bullet
     public GameObject bullet;
     
     //Bullet Force
     [Header("Bullet Properties")]
-    [SerializeField] private float shootForce, upwardForce=0;
-    
+    [SerializeField] private float shootForce;
+    [SerializeField] private float upwardForce=0;
+
     //Gun Stats
     [Header("Gun Properties")]
-    [SerializeField] private float shootingDeltaTime, spread, reloadTime, shotsDeltaTime;
-    [SerializeField] private int magSize, bulletsPerTap;
+    [SerializeField] private float shootingDeltaTime;
+    [SerializeField] private float spread;
+    [SerializeField] private float reloadTime;
+    [SerializeField] private float shotsDeltaTime;
+    [SerializeField] private int magSize;
+    [SerializeField] private int bulletsPerTap;
     [SerializeField] private bool allowHold;
     private int _bulletsLeft, _bulletsShot;
 

@@ -5,7 +5,7 @@ using UnityEngine;
 using TMPro;
 using static System.Math;
 
-public class NPCControlScript : MonoBehaviour
+public class NPCController : MonoBehaviour
 {
     [SerializeField] private int _health = 10;
     private bool _alive = true;
