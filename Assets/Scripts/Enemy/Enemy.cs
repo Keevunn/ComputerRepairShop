@@ -6,15 +6,16 @@ namespace Enemy
 {
     public class Enemy : MonoBehaviour
     {
-        [SerializeField] private NavMeshAgent navMeshAgent;
-        [SerializeField] private float detectRadius = 3f;
-        [SerializeField] private float health = 20f;
+        [SerializeField] protected NavMeshAgent agent;
+        //[SerializeField] private float detectRadius = 3f;
+        //[SerializeField] private float health = 20f;
 
-        private StateMachine _stateMachine = new StateMachine();
+        protected StateMachine stateMachine;
 
         protected virtual void Awake()
         {
-            navMeshAgent = GetComponent<NavMeshAgent>();
+            agent = GetComponent<NavMeshAgent>();
+            stateMachine = new StateMachine();
         
             // STATES
             IState idle = new Idle();
@@ -24,23 +25,23 @@ namespace Enemy
             IState dead = new Dead();
             
             void AT(IState from, IState to, Func<bool> condition) =>
-                _stateMachine.AddTransition(from, to, condition);
+                stateMachine.AddTransition(from, to, condition);
             void AAT(IState to, Func<bool> condition) =>
-                _stateMachine.AddAnyTransition(to, condition);
+                stateMachine.AddAnyTransition(to, condition);
             
             // TRANSITIONS
-            AT(idle, moveToPlayer, /* When player in FOV */ );
-            AT(moveToPlayer, attack, /* When player in range */ );
-            AT(attack, moveToPlayer, /* Player not in range, in FOV */ );
+            /*AT(idle, moveToPlayer, /* When player in FOV #1# );
+            AT(moveToPlayer, attack, /* When player in range #1# );
+            AT(attack, moveToPlayer, /* Player not in range, in FOV #1# );
 
-            AAT(idle, /* Player no long in FOV after delay */);
-            AAT(beingAttacked, /* Enemy can't see player, but taking damage */ );
-            AAT(dead, () => health == 0);
+            AAT(idle, /* Player no long in FOV after delay #1#);
+            AAT(beingAttacked, /* Enemy can't see player, but taking damage #1# );
+            AAT(dead, () => health == 0);*/
         }
 
 
-        private void Update() => _stateMachine.Tick();
+        private void Update() => stateMachine.Tick();
 
-        private void FixedUpdate() => _stateMachine.FixedTick();
+        //private void FixedUpdate() => stateMachine.FixedTick();
     }
 }

@@ -171,7 +171,6 @@ public class Player3DController : MonoBehaviour
         _wallForward = Vector3.Cross(_wallNormal, transform.up);
         
         //rb.AddForce(-_wallForward * wallRunForce, ForceMode.Force);
-        Debug.Log(-_wallForward);
 
         // Jumping off wall
         if (!_wallJump) return;

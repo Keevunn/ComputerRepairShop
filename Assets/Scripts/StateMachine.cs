@@ -49,7 +49,7 @@ public class StateMachine
     public void Tick()
     {
         Transition transition = GetTransition();
-        if (!transition) SetState(transition.To);
+        if (transition != null) SetState(transition.To);
         
         _currentState?.Tick();
     }
