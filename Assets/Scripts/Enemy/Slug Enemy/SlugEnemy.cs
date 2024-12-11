@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,35 +10,56 @@ namespace Enemy.Slug_Enemy
 {
     public class SlugEnemy : Enemy  
     {
-        [SerializeField] private float walkDistance = 10f;
-        [SerializeField] private float walkRadius = 3f;
-        [SerializeField] private float runRadius = 5f;
-
-        [SerializeField] private PlayerDetector detectRange;
+        [SerializeField] protected float runRadius = 5f;
         
-        private StateMachine _stateMachine;
-        
-        
-        private void OnDrawGizmosSelected()
+        /*private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.white;
-            Gizmos.DrawWireSphere(transform.position, walkRadius);
-            
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, runRadius);
-        }
 
-        protected override void Awake()
+            Vector3 line1 = DirFromAngle(transform.eulerAngles.y + detectRange.GetFoV() / 2);
+            Vector3 line2 = DirFromAngle(transform.eulerAngles.y - detectRange.GetFoV() / 2);
+            
+            Gizmos.DrawLine(transform.position, transform.position + line1 * radius);
+            Gizmos.DrawLine(transform.position, transform.position + line2 * radius);
+
+            if (detectRange.PlayerInRange())
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(transform.position, detectRange.GetPlayerPosition());
+            }
+            
+        }
+        private Vector3 DirFromAngle(float angle)
+        {
+            return new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad), 0, Mathf.Cos(angle * Mathf.Deg2Rad));
+        }*/
+
+        public override void Awake()
         {
             base.Awake();
-            _stateMachine = new StateMachine();
-            if (!detectRange) detectRange = GetComponent<PlayerDetector>();
             
-            IState idle = new Idle(transform, agent, detectRange, walkDistance);
             
-            _stateMachine.SetState(idle);
+            // STATES
+            //Idle = new Idle(transform, agent, walkDistance);
+            
+            
+            // TRANSITIONS
+            
+            /*AT(Idle, MoveToPlayer, /* When player in FOV #1# );
+            AT(Attack, MoveToPlayer, /* Player not in range, in FOV #1# );
+
+            AAT(BeingAttacked, /* Enemy can't see player, but taking damage #1# );
+            AAT(Dead, () => health == 0);*/
+            
+            StateMachine.SetState(Idle);
         }
         
-        private void Update() => _stateMachine.Tick();
+        private void Update()
+        {
+            StartCoroutine(detectRange.FoVRoutine());
+            StateMachine.Tick();
+        }
+
+        
     }
 }

@@ -315,7 +315,7 @@ GameObject:
   - component: {fileID: 76470146}
   - component: {fileID: 76470148}
   - component: {fileID: 76470147}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Front wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -689,7 +689,7 @@ GameObject:
   - component: {fileID: 255753409}
   - component: {fileID: 255753410}
   - component: {fileID: 255753411}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Left wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -868,7 +868,7 @@ Transform:
   m_GameObject: {fileID: 334741621}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -45}
+  m_LocalPosition: {x: 0, y: 1, z: 61.06}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1941,6 +1941,7 @@ GameObject:
   m_Component:
   - component: {fileID: 930615451}
   - component: {fileID: 930615453}
+  - component: {fileID: 930615455}
   - component: {fileID: 930615450}
   - component: {fileID: 930615452}
   - component: {fileID: 930615454}
@@ -1963,11 +1964,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbe0172cbfec9cc4aa6090af590ebae8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent: {fileID: 930615452}
   walkDistance: 10
-  walkRadius: 10
-  runRadius: 20
+  radius: 15
+  speed: 1
+  agent: {fileID: 930615452}
   detectRange: {fileID: 930615454}
+  health: 20
+  runRadius: 10
 --- !u!4 &930615451
 Transform:
   m_ObjectHideFlags: 0
@@ -1977,7 +1980,7 @@ Transform:
   m_GameObject: {fileID: 930615449}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 77.8}
+  m_LocalPosition: {x: 0, y: 0.25, z: 77.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2039,6 +2042,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4733548f21c51284385cee2ccac31dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 128
+  canHear: 1
+  fieldOfView: 90
+--- !u!135 &930615455
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930615449}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 15
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1015933672
 GameObject:
   m_ObjectHideFlags: 0
@@ -2050,7 +2079,7 @@ GameObject:
   - component: {fileID: 1015933673}
   - component: {fileID: 1015933674}
   - component: {fileID: 1015933675}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Back wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2433,7 +2462,7 @@ GameObject:
   - component: {fileID: 1242790620}
   - component: {fileID: 1242790619}
   - component: {fileID: 1242790618}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2589,7 +2618,7 @@ GameObject:
   - component: {fileID: 1356057788}
   - component: {fileID: 1356057787}
   - component: {fileID: 1356057786}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3096,7 +3125,7 @@ GameObject:
   - component: {fileID: 1477362978}
   - component: {fileID: 1477362977}
   - component: {fileID: 1477362976}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3510,7 +3539,7 @@ GameObject:
   - component: {fileID: 1616689832}
   - component: {fileID: 1616689833}
   - component: {fileID: 1616689834}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Right wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3978,7 +4007,7 @@ GameObject:
   - component: {fileID: 5685577100306111459}
   - component: {fileID: 2319023230585642559}
   - component: {fileID: 7801660957332216702}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pavement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4003,7 +4032,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6938379136485102364}
   - component: {fileID: 6938379136485102365}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pavement (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

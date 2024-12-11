@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 /// <summary>
 /// Class <c>StateMachine</c> models a general state machine. Can add states and each of their exiting transitions.
@@ -75,7 +76,6 @@ public class StateMachine
         
         _currentState?.OnExit();
         _currentState = state;
-
         _transitions.TryGetValue(_currentState.GetType(), out _currentTransitions);
         _currentTransitions ??= _emptyTransitions;
         
@@ -124,7 +124,10 @@ public class StateMachine
         
         // Check list of transitions from current state
         foreach (var transition in _currentTransitions.Where(transition => transition.Condition()))
+        {
             return transition;
+        }
+            
 
         // no valid transitions
         return null;
