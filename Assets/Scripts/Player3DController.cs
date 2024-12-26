@@ -9,6 +9,12 @@ public class Player3DController : MonoBehaviour
 {
     private const float PlayerHeight = 2f;
     
+    [Header("Health")]
+    [SerializeField] private float maxHealth = 50f;
+    private float _health;
+    public bool IsAlive { get; set; }
+    public bool IsTakingDamage { get; set; }
+
     [Header("Movement")]
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float sprintSpeed = 10f;
@@ -45,6 +51,7 @@ public class Player3DController : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] private CameraController cam;
     [SerializeField] private GravityController gravityController;
+    public TextMeshProUGUI healthDisplay;
     
     private const float MovementMultiplier = 10f;
 
@@ -61,6 +68,11 @@ public class Player3DController : MonoBehaviour
         
         _groundLayer = LayerMask.GetMask("Ground");
         _groundCheckRadius = (PlayerHeight / 2) + 0.1f;
+
+        _health = maxHealth;
+        if (healthDisplay) healthDisplay.SetText(_health + "/" + maxHealth);
+
+        Physics.queriesHitTriggers = false;
     }
 
     private void Start()
@@ -75,6 +87,9 @@ public class Player3DController : MonoBehaviour
         if (!_wallJump) WallCheck();
         if (_isOnWall && !_isGrounded) StartWallRun();
         else cam.IsWallRunning = false;
+        
+        if (IsTakingDamage) TakeDamage(1);
+        if (healthDisplay) healthDisplay.SetText(_health + "/" + maxHealth);
     }
 
     private void FixedUpdate()
@@ -86,6 +101,14 @@ public class Player3DController : MonoBehaviour
         
         if (_isOnWall && !_isGrounded) WallRunMovement();
         else gravityController.enabled = false;
+    }
+    
+    private void TakeDamage(float dmg)
+    {
+        Debug.Log("Ow");
+        _health -= dmg;
+        if (_health <= 0) IsAlive = false;
+        IsTakingDamage = false;
     }
 
     private void MovementInputControls()

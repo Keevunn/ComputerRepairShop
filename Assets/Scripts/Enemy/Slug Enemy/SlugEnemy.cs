@@ -10,7 +10,7 @@ namespace Enemy.Slug_Enemy
 {
     public class SlugEnemy : Enemy  
     {
-        [SerializeField] protected float runRadius = 5f;
+        [SerializeField] private GameObject bulletPrefab;
         
         /*private void OnDrawGizmosSelected()
         {
@@ -38,9 +38,16 @@ namespace Enemy.Slug_Enemy
         {
             base.Awake();
             
-            
             // STATES
             //Idle = new Idle(transform, agent, walkDistance);
+            
+            // TODO: ATTACK STATE SETUP
+            Attack = new Attack(this, bulletPrefab, 1, 1, 0f);
+            
+            AT(MoveToPlayer, Attack, detectRange.CanAttackPlayer);
+            AT(Attack, MoveToPlayer, () => !detectRange.CanAttackPlayer() && detectRange.CanSeePlayer());
+            //AT(Attack, Idle, () => !detectRange.CanSeePlayer() && !detectRange.CanHearPlayer());
+            //AT(Idle, Attack, detectRange.CanHearPlayer);
             
             
             // TRANSITIONS
@@ -57,9 +64,14 @@ namespace Enemy.Slug_Enemy
         private void Update()
         {
             StartCoroutine(detectRange.FoVRoutine());
+            if (detectRange.PlayerInRange()) Target = detectRange.GetPlayerRef(); 
             StateMachine.Tick();
         }
 
+        public Player3DController GetPlayerScript(GameObject player)
+        {
+            return player.GetComponent<Player3DController>();
+        }
         
     }
 }

@@ -8,42 +8,47 @@ namespace Enemy
     public class PlayerDetector : MonoBehaviour
     {
         private GameObject _player;
+        private Enemy _enemyRef;
         // Will only have max 2 colliders for player detection
-        private float _radius = 100f;
-        private bool _canSeePlayer = false, _playerInSight = false, _canHearPlayer = false;
+        private float _seeingRadius = 100f;
+        private float _attackRadius;
+        
+        private bool _canSeePlayer = false, _playerInSight = false, _canAttackPlayer = false;
         [SerializeField] private LayerMask obstacleMask;
-        private float _hearRadius;
-        [SerializeField] private bool canHear;
+        
+        public bool CanHear { get; set; }
         [SerializeField] private float fieldOfView = 180f;
 
         private void Awake()
         {
-            SphereCollider[] colliders = GetComponents<SphereCollider>();
-            if (colliders.Length == 1) _radius = colliders[0].radius;
+            /*SphereCollider[] colliders = GetComponents<SphereCollider>();
+            if (colliders.Length == 1) _hearingRadius = colliders[0].radius;
             else
             {
-                _radius = Math.Max(colliders[0].radius, colliders[1].radius) + 0.4f;
-                _hearRadius = Math.Min(colliders[0].radius, colliders[1].radius) + 0.4f;
-            }
+                _seeingRadius = Math.Max(colliders[0].radius, colliders[1].radius) + 0.4f;
+                _hearingRadius = Math.Min(colliders[0].radius, colliders[1].radius) + 0.4f;
+            }*/
+
+            _enemyRef = GetComponent<Enemy>();
+            _seeingRadius = _enemyRef.GetSeeingRadius();
+            _attackRadius = _enemyRef.GetAttackRadius();
+
 
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player"))
-            {
-                _player = other.gameObject;
-                _playerInSight = true;
-                if (canHear)
-                {
-                    float distance = Vector3.Distance(transform.position, other.bounds.center);
-                    // In fov radius - can see player 
-                    if (distance > _hearRadius && distance <= _radius) _playerInSight = true;
-                    // In hearing radius - can hear player
-                    if (distance <= _hearRadius) _canHearPlayer = true;
-                }
-            }
-                
+            if (!other.CompareTag("Player")) return;
+            _player = other.gameObject.transform.parent.gameObject;
+            _playerInSight = true;
+            float distance = Vector3.Distance(transform.position, other.ClosestPoint(transform.position));
+            // In seeing radius - can see player 
+            //if (distance > _attackRadius && distance <= _seeingRadius) _playerInSight = true;
+            // In attack radius - can hear player
+            if (!(distance <= _attackRadius)) return;
+            
+            _canAttackPlayer = true;
+
         }
 
         private void OnTriggerExit(Collider other)
@@ -59,10 +64,12 @@ namespace Enemy
         {
             yield return new WaitForSeconds(0.75f);
             
-            if (canHear)
+            if (CanHear)
             {
-                if (distance >= _hearRadius) _canHearPlayer = false;
-                if (distance >= _radius)
+                // Can't hear player anymore
+                if (distance >= _attackRadius) _canAttackPlayer = false;
+                // Can't see player anymore
+                if (distance >= _seeingRadius)
                 {
                     _player = null;
                     _playerInSight = false;
@@ -79,29 +86,48 @@ namespace Enemy
 
         public bool PlayerInRange()
         {
-            return _canHearPlayer || _canSeePlayer;
-        } 
+            return _canAttackPlayer || _canSeePlayer;
+        }
+
+        public bool CanAttackPlayer()
+        {
+            /*if (!_player || !PlayerInRange()) return false;
+            
+            float distance = Vector3.Distance(transform.position, _player.transform.position);
+            return (distance <= _seeingRadius);*/
+            return _canAttackPlayer;
+        }
+        public bool CanSeePlayer()
+        {
+            return _canSeePlayer;
+        }
+        public bool CanHearPlayer()
+        {
+            return CanHear && _canAttackPlayer;
+        }
+        
+        
 
         public Vector3 GetPlayerPosition()
         {
             return _player?.transform.position ?? Vector3.zero;
         }
 
-        public Transform GetPlayerTransform()
+        public GameObject GetPlayerRef()
         {
-            return _player?.transform;
+            return _player;
         }
         
         // FOV checks
         public IEnumerator FoVRoutine()
         {
-            yield return new WaitForSeconds(0.2f);
-            if (_player) FoVCheck();
+            yield return new WaitForSeconds(0.15f);
+            FoVCheck();
         }
 
         private void FoVCheck()
         {
-            if (!_playerInSight)
+            if (!_playerInSight || !_player)
             {
                 _canSeePlayer = false;
                 return;
@@ -118,7 +144,7 @@ namespace Enemy
             
             float distance = Vector3.Distance(transform.position, _player.transform.position);
 
-            if (!Physics.Raycast(transform.position, dir, distance, obstacleMask)) _canSeePlayer = true;
+            if (distance <= _seeingRadius && !Physics.Raycast(transform.position, dir, distance, obstacleMask)) _canSeePlayer = true;
             else if (_canSeePlayer) _canSeePlayer = false;
             
 

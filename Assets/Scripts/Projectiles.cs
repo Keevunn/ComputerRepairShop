@@ -3,17 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using GameObject = UnityEngine.GameObject;
 using Random = UnityEngine.Random;
 
 public class Projectiles : MonoBehaviour
 {
     //Bullet
-    public GameObject bullet;
+    public GameObject bulletRef;
+    private GameObject[] _bullets;
+    private BulletControllerScript[] _bulletControllers;
+    private int _currentBullet;
     
     //Bullet Force
     [Header("Bullet Properties")]
     [SerializeField] private float shootForce;
-    [SerializeField] private float upwardForce=0;
+    [SerializeField] private float upwardForce;
 
     //Gun Stats
     [Header("Gun Properties")]
@@ -45,6 +49,15 @@ public class Projectiles : MonoBehaviour
     {
         _bulletsLeft = magSize;
         _readyToShoot = true;
+        
+        _bullets = new GameObject[bulletsPerTap];
+        _bulletControllers = new BulletControllerScript[bulletsPerTap];
+        for (int i = 0; i < bulletsPerTap; i++)
+        {
+            _bullets[i] = Instantiate(bulletRef, attackPoint.position, Quaternion.identity);
+            _bullets[i].SetActive(false);
+            _bulletControllers[i] = _bullets[i].GetComponent<BulletControllerScript>();
+        }
     }
 
     private void Start()
@@ -121,15 +134,14 @@ public class Projectiles : MonoBehaviour
         dir = dir.normalized;
         
         //Spawn bullet - TODO: Can load the number of bullets per shot at start then no need to instantiate them everytime, just sleep them
-        GameObject currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity);
-        BulletControllerScript bulletController = currentBullet.GetComponent<BulletControllerScript>();
         //Shoot bullet in direction of dir
-        currentBullet.transform.forward = dir;
         
+        _bullets[_currentBullet].transform.forward = dir;
         //Add force to bullet
-        bulletController.SetVelocity(dir, shootForce);
-        bulletController.SetStartPoint(attackPoint.position);
-        bulletController.AddForce();
+        _bulletControllers[_currentBullet].SetVelocity(dir, shootForce);
+        _bulletControllers[_currentBullet].SetStartPoint(attackPoint.position);
+        _bullets[_currentBullet].SetActive(true);
+        _bulletControllers[_currentBullet].AddForce();
         //currentBulletrb.AddForce(dir * shootForce, ForceMode.Impulse);
         //For bouncing grenades
         //currentBulletrb.AddForce(cam.transform.up * upwardForce, ForceMode.Impulse);
@@ -140,14 +152,16 @@ public class Projectiles : MonoBehaviour
         _bulletsLeft--;
         _bulletsShot++;
 
-        StartCoroutine(ResetShot(shootingDeltaTime, currentBullet));
+        StartCoroutine(ResetShot(shootingDeltaTime));
         
         //Multiple bullets - can turn this into timer method
+        if (_currentBullet < bulletsPerTap) _currentBullet++;
+        if (_currentBullet >= bulletsPerTap) _currentBullet = 0;
         if (_bulletsShot < bulletsPerTap && _bulletsLeft > 0) StartCoroutine(MultiShoot(shotsDeltaTime));
     }
     
     //Reset Shooting
-    private IEnumerator ResetShot(float delayTime, GameObject obj)
+    private IEnumerator ResetShot(float delayTime)
     {
         yield return new WaitForSeconds(delayTime);
         _readyToShoot = true;

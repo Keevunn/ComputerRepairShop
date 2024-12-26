@@ -20,6 +20,8 @@ namespace Enemy
         private float _timeStuck;
         private const float TimeStuckMax = 0.5f;
 
+        private float _initStoppingDistance;
+
         public Idle(Enemy enemyRef, NavMeshAgent agent, PlayerDetector detector, float walkDistance)
         {
             _enemyRef = enemyRef;
@@ -66,13 +68,18 @@ namespace Enemy
 
         public void OnEnter()
         {
+            Debug.Log("Idle State");
+            _initStoppingDistance = _agent.stoppingDistance;
+            _agent.stoppingDistance = 0;
+            
             MoveToNewPosition();
         }
 
         public void OnExit()
         {
             // Set player position as target
-            _enemyRef.Target = _detector.GetPlayerTransform();
+            //_enemyRef.Target = _detector.GetPlayerRef();
+            _agent.stoppingDistance = _initStoppingDistance;
         }
     }
 }
