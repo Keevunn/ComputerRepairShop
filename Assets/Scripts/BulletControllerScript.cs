@@ -61,4 +61,9 @@ public class BulletControllerScript : MonoBehaviour
         _startPoint = point;
         transform.position = _startPoint;
     }
+
+    public void Reset()
+    {
+        _velocity = Vector3.zero;
+    }
 }

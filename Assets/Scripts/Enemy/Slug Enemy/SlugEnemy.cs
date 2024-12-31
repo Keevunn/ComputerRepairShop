@@ -42,7 +42,7 @@ namespace Enemy.Slug_Enemy
             //Idle = new Idle(transform, agent, walkDistance);
             
             // TODO: ATTACK STATE SETUP
-            Attack = new Attack(this, bulletPrefab, 1, 1, 0f);
+            Attack = new Attack(this, bulletPrefab, detectRange, 1, 40f, 1, 0f);
             
             AT(MoveToPlayer, Attack, detectRange.CanAttackPlayer);
             AT(Attack, MoveToPlayer, () => !detectRange.CanAttackPlayer() && detectRange.CanSeePlayer());
@@ -66,11 +66,6 @@ namespace Enemy.Slug_Enemy
             StartCoroutine(detectRange.FoVRoutine());
             if (detectRange.PlayerInRange()) Target = detectRange.GetPlayerRef(); 
             StateMachine.Tick();
-        }
-
-        public Player3DController GetPlayerScript(GameObject player)
-        {
-            return player.GetComponent<Player3DController>();
         }
         
     }

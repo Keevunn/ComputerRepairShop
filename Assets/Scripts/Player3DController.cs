@@ -105,7 +105,6 @@ public class Player3DController : MonoBehaviour
     
     private void TakeDamage(float dmg)
     {
-        Debug.Log("Ow");
         _health -= dmg;
         if (_health <= 0) IsAlive = false;
         IsTakingDamage = false;

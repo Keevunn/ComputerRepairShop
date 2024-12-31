@@ -58,8 +58,7 @@ namespace Enemy
 
         public void OnExit()
         {
-            //_agent.stoppingDistance = 0;
-            //_agent.isStopped = true;
+            _agent.SetDestination(_enemyRef.transform.position);
         }
     }
 }

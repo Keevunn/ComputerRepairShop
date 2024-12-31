@@ -33,7 +33,6 @@ namespace Enemy
             _seeingRadius = _enemyRef.GetSeeingRadius();
             _attackRadius = _enemyRef.GetAttackRadius();
 
-
         }
 
         private void OnTriggerEnter(Collider other)
@@ -46,7 +45,6 @@ namespace Enemy
             //if (distance > _attackRadius && distance <= _seeingRadius) _playerInSight = true;
             // In attack radius - can hear player
             if (!(distance <= _attackRadius)) return;
-            
             _canAttackPlayer = true;
 
         }
@@ -105,8 +103,6 @@ namespace Enemy
         {
             return CanHear && _canAttackPlayer;
         }
-        
-        
 
         public Vector3 GetPlayerPosition()
         {
@@ -133,6 +129,13 @@ namespace Enemy
                 return;
             }
 
+            if ( 89f < Mathf.Abs(Vector3.Angle(_player.transform.up, transform.up)) && 
+                 Mathf.Abs(Vector3.Angle(_player.transform.up, transform.up)) < 91f)
+            {
+                _canSeePlayer = true;
+                return;
+            }
+
             Vector3 dir = (_player.transform.position - transform.position).normalized;
             float angle = Vector3.Angle(transform.forward, dir);
 
@@ -146,8 +149,6 @@ namespace Enemy
 
             if (distance <= _seeingRadius && !Physics.Raycast(transform.position, dir, distance, obstacleMask)) _canSeePlayer = true;
             else if (_canSeePlayer) _canSeePlayer = false;
-            
-
         }
     }
 }
