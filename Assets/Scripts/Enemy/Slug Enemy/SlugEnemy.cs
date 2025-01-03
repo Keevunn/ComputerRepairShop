@@ -10,7 +10,7 @@ namespace Enemy.Slug_Enemy
 {
     public class SlugEnemy : Enemy  
     {
-        [SerializeField] private GameObject bulletPrefab;
+        [SerializeField] private Bullet bulletPrefab;
         
         /*private void OnDrawGizmosSelected()
         {
@@ -41,11 +41,11 @@ namespace Enemy.Slug_Enemy
             // STATES
             //Idle = new Idle(transform, agent, walkDistance);
             
-            // TODO: ATTACK STATE SETUP
             Attack = new Attack(this, bulletPrefab, detectRange, 1, 40f, 1, 0f);
             
-            AT(MoveToPlayer, Attack, detectRange.CanAttackPlayer);
-            AT(Attack, MoveToPlayer, () => !detectRange.CanAttackPlayer() && detectRange.CanSeePlayer());
+            AT(MoveToPlayer, Attack, () => detectRange.CanAttackPlayer);
+            AT(Attack, MoveToPlayer, () => !detectRange.CanAttackPlayer && detectRange.CanSeePlayer);
+            
             //AT(Attack, Idle, () => !detectRange.CanSeePlayer() && !detectRange.CanHearPlayer());
             //AT(Idle, Attack, detectRange.CanHearPlayer);
             
@@ -65,8 +65,10 @@ namespace Enemy.Slug_Enemy
         {
             StartCoroutine(detectRange.FoVRoutine());
             if (detectRange.PlayerInRange()) Target = detectRange.GetPlayerRef(); 
+            
+            healthDisplay.SetText(CurrentHealth + " / " + health); 
+            
             StateMachine.Tick();
         }
-        
     }
 }

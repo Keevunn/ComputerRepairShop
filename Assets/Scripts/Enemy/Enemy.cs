@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,15 +10,19 @@ namespace Enemy
     {
         [SerializeField] protected float walkDistance = 10f;
         [SerializeField] protected float attackRadius = 10f;
-        [SerializeField] protected float seeingRadius = 15f;
+        [SerializeField] protected float visionRadius = 15f;
         [SerializeField] protected float speed = 5f;
         
         [SerializeField] protected NavMeshAgent agent;
-        [SerializeField] protected PlayerDetector detectRange;
+        [SerializeField] public PlayerDetector detectRange;
         public GameObject Target { get; protected set; }
         [SerializeField] protected float health = 20f;
+        protected float CurrentHealth;
+        [SerializeField] protected TextMeshPro healthDisplay;
 
         [SerializeField] protected bool canHear;
+        //private bool _isAlive = true;
+        
 
         protected StateMachine StateMachine;
         protected IState Idle;
@@ -28,11 +34,9 @@ namespace Enemy
         public virtual void Awake()
         {
             // Enemies will always have 2 colliders - TODO: create sphere colliders if they don't exist
-            SphereCollider[] colliders = GetComponents<SphereCollider>();
-            colliders[0].radius = attackRadius;
-            colliders[1].radius = seeingRadius;
-            
-            
+            SphereCollider[] colliders = GetComponentsInChildren<SphereCollider>();
+            colliders.First(sphereCollider => sphereCollider.CompareTag("AttackRadius")).radius = attackRadius;
+            colliders.First(sphereCollider => sphereCollider.CompareTag("VisionRadius")).radius = visionRadius;
             
             agent = GetComponent<NavMeshAgent>();
             agent.speed = speed;
@@ -42,6 +46,9 @@ namespace Enemy
             
             if (!detectRange) detectRange = GetComponent<PlayerDetector>();
             detectRange.CanHear = canHear;
+
+            CurrentHealth = health;
+            healthDisplay.SetText(CurrentHealth + " / " + health); 
         
             // STATES
             Idle = new Idle(this, agent, detectRange, walkDistance);
@@ -51,14 +58,14 @@ namespace Enemy
             Dead = new Dead();
             
             // TRANSITIONS
-            AT(Idle, MoveToPlayer, () => detectRange.CanSeePlayer() || detectRange.CanHearPlayer());
+            AT(Idle, MoveToPlayer, () => detectRange.CanSeePlayer || detectRange.CanHearPlayer);
             //AT(MoveToPlayer, Idle, () => !detectRange.CanSeePlayer() && !detectRange.CanHearPlayer());
             
-            AAT(Idle, () => !detectRange.CanSeePlayer() && !detectRange.CanHearPlayer());
+            AAT(Idle, () => !detectRange.CanSeePlayer && !detectRange.CanHearPlayer);
         }
         
         public float GetAttackRadius() => attackRadius;
-        public float GetSeeingRadius() => seeingRadius;
+        public float GetSeeingRadius() => visionRadius;
 
         protected void AT(IState from, IState to, Func<bool> condition) =>
             StateMachine.AddTransition(from, to, condition);
@@ -67,5 +74,11 @@ namespace Enemy
 
         /*private void Update() => StateMachine.Tick();
         private void FixedUpdate() => stateMachine.FixedTick();*/
+        
+        public void TakeDamage(int dmg)
+        {
+            CurrentHealth -= dmg;
+            if (CurrentHealth <= 0) gameObject.SetActive(false);
+        }
     }
 }

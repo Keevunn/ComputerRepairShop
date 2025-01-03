@@ -13,7 +13,10 @@ namespace Enemy
         private float _seeingRadius = 100f;
         private float _attackRadius;
         
-        private bool _canSeePlayer = false, _playerInSight = false, _canAttackPlayer = false;
+        private bool _playerInSight = false;
+        public bool CanSeePlayer { get; private set; }
+        public bool CanAttackPlayer { get; private set; }
+        public bool CanHearPlayer => CanHear && CanAttackPlayer;
         [SerializeField] private LayerMask obstacleMask;
         
         public bool CanHear { get; set; }
@@ -21,17 +24,12 @@ namespace Enemy
 
         private void Awake()
         {
-            /*SphereCollider[] colliders = GetComponents<SphereCollider>();
-            if (colliders.Length == 1) _hearingRadius = colliders[0].radius;
-            else
-            {
-                _seeingRadius = Math.Max(colliders[0].radius, colliders[1].radius) + 0.4f;
-                _hearingRadius = Math.Min(colliders[0].radius, colliders[1].radius) + 0.4f;
-            }*/
-
             _enemyRef = GetComponent<Enemy>();
             _seeingRadius = _enemyRef.GetSeeingRadius();
             _attackRadius = _enemyRef.GetAttackRadius();
+
+            CanSeePlayer = false;
+            CanAttackPlayer = false;
 
         }
 
@@ -39,13 +37,14 @@ namespace Enemy
         {
             if (!other.CompareTag("Player")) return;
             _player = other.gameObject.transform.parent.gameObject;
-            _playerInSight = true;
-            float distance = Vector3.Distance(transform.position, other.ClosestPoint(transform.position));
             // In seeing radius - can see player 
-            //if (distance > _attackRadius && distance <= _seeingRadius) _playerInSight = true;
+            _playerInSight = true;
+            
+            float distance = Vector3.Distance(transform.position, other.ClosestPoint(transform.position));
+            
             // In attack radius - can hear player
             if (!(distance <= _attackRadius)) return;
-            _canAttackPlayer = true;
+            CanAttackPlayer = true;
 
         }
 
@@ -65,13 +64,13 @@ namespace Enemy
             if (CanHear)
             {
                 // Can't hear player anymore
-                if (distance >= _attackRadius) _canAttackPlayer = false;
+                if (distance >= _attackRadius) CanAttackPlayer = false;
                 // Can't see player anymore
                 if (distance >= _seeingRadius)
                 {
                     _player = null;
                     _playerInSight = false;
-                    _canSeePlayer = false;
+                    CanSeePlayer = false;
                 }
             }
             else _player = null;
@@ -84,29 +83,7 @@ namespace Enemy
 
         public bool PlayerInRange()
         {
-            return _canAttackPlayer || _canSeePlayer;
-        }
-
-        public bool CanAttackPlayer()
-        {
-            /*if (!_player || !PlayerInRange()) return false;
-            
-            float distance = Vector3.Distance(transform.position, _player.transform.position);
-            return (distance <= _seeingRadius);*/
-            return _canAttackPlayer;
-        }
-        public bool CanSeePlayer()
-        {
-            return _canSeePlayer;
-        }
-        public bool CanHearPlayer()
-        {
-            return CanHear && _canAttackPlayer;
-        }
-
-        public Vector3 GetPlayerPosition()
-        {
-            return _player?.transform.position ?? Vector3.zero;
+            return CanAttackPlayer || CanSeePlayer;
         }
 
         public GameObject GetPlayerRef()
@@ -125,14 +102,14 @@ namespace Enemy
         {
             if (!_playerInSight || !_player)
             {
-                _canSeePlayer = false;
+                CanSeePlayer = false;
                 return;
             }
 
             if ( 89f < Mathf.Abs(Vector3.Angle(_player.transform.up, transform.up)) && 
                  Mathf.Abs(Vector3.Angle(_player.transform.up, transform.up)) < 91f)
             {
-                _canSeePlayer = true;
+                CanSeePlayer = true;
                 return;
             }
 
@@ -141,14 +118,14 @@ namespace Enemy
 
             if (angle > fieldOfView / 2)
             {
-                _canSeePlayer = false;
+                CanSeePlayer = false;
                 return;
             }
             
             float distance = Vector3.Distance(transform.position, _player.transform.position);
 
-            if (distance <= _seeingRadius && !Physics.Raycast(transform.position, dir, distance, obstacleMask)) _canSeePlayer = true;
-            else if (_canSeePlayer) _canSeePlayer = false;
+            if (distance <= _seeingRadius && !Physics.Raycast(transform.position, dir, distance, obstacleMask)) CanSeePlayer = true;
+            else if (CanSeePlayer) CanSeePlayer = false;
         }
     }
 }

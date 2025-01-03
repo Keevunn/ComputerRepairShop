@@ -27,7 +27,7 @@ namespace Enemy
             _enemyRef = enemyRef;
             _transform = enemyRef.transform;
 
-            _detector = detector;
+            //_detector = detector;
             
             _lastPos = _transform.position;
             _agent = agent;
@@ -71,6 +71,8 @@ namespace Enemy
             Debug.Log("Idle State");
             _initStoppingDistance = _agent.stoppingDistance;
             _agent.stoppingDistance = 0;
+
+            _detector = _enemyRef.detectRange;
             
             MoveToNewPosition();
         }

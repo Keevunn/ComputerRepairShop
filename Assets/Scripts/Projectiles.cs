@@ -3,16 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Pool;
 using GameObject = UnityEngine.GameObject;
 using Random = UnityEngine.Random;
 
 public class Projectiles : MonoBehaviour
 {
     //Bullet
-    public GameObject bulletRef;
-    private GameObject[] _bullets;
-    private BulletControllerScript[] _bulletControllers;
+    public Bullet bulletRef;
     private int _currentBullet;
+    private ObjectPool<Bullet> _pool;
     
     //Bullet Force
     [Header("Bullet Properties")]
@@ -45,19 +45,31 @@ public class Projectiles : MonoBehaviour
     public Camera cam;
     public Transform attackPoint;
 
+    #region Pool functions
+    private Bullet CreateBullet()
+    {
+        var bullet = Instantiate(bulletRef);
+        bullet.name = "Player Bullet";
+        bullet.SetPool(_pool);
+        bullet.IsEnemyBullet = false;
+        return bullet;
+    }
+
+    private void OnTakeBallFromPool(Bullet bullet) => bullet.gameObject.SetActive(true);
+    private void OnReturnBallToPool(Bullet bullet) => bullet.gameObject.SetActive(false);
+    #endregion
+    
     private void Awake()
     {
         _bulletsLeft = magSize;
         _readyToShoot = true;
         
-        _bullets = new GameObject[bulletsPerTap];
-        _bulletControllers = new BulletControllerScript[bulletsPerTap];
-        for (int i = 0; i < bulletsPerTap; i++)
-        {
-            _bullets[i] = Instantiate(bulletRef, attackPoint.position, Quaternion.identity);
-            _bullets[i].SetActive(false);
-            _bulletControllers[i] = _bullets[i].GetComponent<BulletControllerScript>();
-        }
+        _pool = new ObjectPool<Bullet>(
+            CreateBullet,
+            OnTakeBallFromPool,
+            OnReturnBallToPool,
+            Destroy,
+            true, 10, 15);
     }
 
     private void Start()
@@ -108,8 +120,7 @@ public class Projectiles : MonoBehaviour
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f,0.5f,0));
 
         //If ray hits something
-        Vector3 targetPoint;
-        targetPoint = Physics.Raycast(ray, out RaycastHit hit) ? hit.point : ray.GetPoint(75);
+        Vector3 targetPoint = Physics.Raycast(ray, out RaycastHit hit) ? hit.point : ray.GetPoint(75);
         
         /*
         //Close range debugging
@@ -134,15 +145,15 @@ public class Projectiles : MonoBehaviour
         dir = dir.normalized;
         
         //Spawn bullet - TODO: Can load the number of bullets per shot at start then no need to instantiate them everytime, just sleep them
-        //Shoot bullet in direction of dir
+        var bullet = _pool.Get();
+        if (!bullet) return;
         
-        _bullets[_currentBullet].transform.forward = dir;
+        //Shoot bullet in direction of dir
+        bullet.transform.forward = dir;
         //Add force to bullet
-        _bulletControllers[_currentBullet].SetVelocity(dir, shootForce);
-        _bulletControllers[_currentBullet].SetStartPoint(attackPoint.position);
-        _bullets[_currentBullet].SetActive(true);
-        _bulletControllers[_currentBullet].AddForce();
-        //currentBulletrb.AddForce(dir * shootForce, ForceMode.Impulse);
+        bullet.SetVelocity(dir, shootForce);
+        bullet.SetStartPoint(attackPoint.position);
+        bullet.AddForce();
         //For bouncing grenades
         //currentBulletrb.AddForce(cam.transform.up * upwardForce, ForceMode.Impulse);
         
